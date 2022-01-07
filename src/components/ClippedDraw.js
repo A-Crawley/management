@@ -39,7 +39,7 @@ export function ClippedDrawer(props) {
         <Box sx={{ overflow: 'auto' }}>
           <List>
             {props.pages.map(item => (
-              <ListItem button key={item.title} onClick={() => props.pageClick(item.page)}>
+              <ListItem button key={item.title} onClick={() => props.pageClick(item.title)}>
                 <ListItemIcon>
                   {item.icon()}
                 </ListItemIcon>
@@ -62,7 +62,7 @@ export function ClippedDrawer(props) {
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar />
-        {props.page}
+        {props.children}
       </Box>
     </Box>
   );

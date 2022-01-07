@@ -1,44 +1,69 @@
 import { useState } from 'react';
 import ReactDOM from 'react-dom';
-import { ThemeProvider, CssBaseline, createTheme, Paper, Typography } from '@mui/material'
+import { ThemeProvider, CssBaseline, createTheme } from '@mui/material'
 import { ClippedDrawer } from './components/ClippedDraw.js'
-import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
-import './pages/Overview.js'
+import Work from './pages/Work.js'
 import Overview from './pages/Overview.js';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import WorkIcon from '@mui/icons-material/Work';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import Store from './pages/Store.js';
+import { useStateRef } from './util/reference.js'
 
 const theme = createTheme();
 
-const pageTwo = () => {
-    return (
-        <Paper><Typography>Two</Typography></Paper>
-    )
-}
-const pageThree = () => {
-    return (
-        <Paper><Typography>Three</Typography></Paper>
-    )
-}
-
 const pages = [
     {title: 'Overview', page: Overview, icon: () => (< DashboardIcon/>)},
-    {title: 'Page Two', page: pageTwo, icon: () => (< AccessibilityNewIcon/>)},
-    {title: 'Page Three', page: pageThree, icon: () => (< AccessibilityNewIcon/>)},
+    {title: 'Work', page: Work, icon: () => (< WorkIcon/>)},
+    {title: 'Store', page: Store, icon: () => (< ShoppingCartIcon/>)},
 ]
 
 function App() {
 
-    const [page, changePage] = useState(Overview);
+    const [page, changePage] = useState(localStorage.getItem('page') === null ? 'Overview' : localStorage.getItem('page'));
+    const [collectingCans, setCollectingCans] = useState(false);
+    const [balance, updateBalance, balanceRef] = useStateRef(0);
+    
+    const [inventory, updateInventory, ref] = useStateRef({
+        cans: {
+            name: "Cans",
+            description: "Some old cans you picked up",
+            amount: 0,
+            salePrice: 0.5,
+            sell: (value) => {
+                if (ref.current.cans.amount <= 0)
+                    return;
+                updateInventory({ cans: { ...inventory.cans, amount: ref.current.cans.amount + value}})
+                updateBalance(balanceRef.current + (Math.abs(value) * ref.current.cans.salePrice));
+            }
 
+        }
+    });
+    
     const pageChangeHandle = (page) => {
-        //console.log('changeing page:', page);
         changePage(page);
+        localStorage.setItem('page', page);
+    }
+
+    const updateCansHandle = () => {
+        setCollectingCans(true);
+        setTimeout(() => {
+            updateInventory({ cans: { ...inventory.cans, amount: inventory.cans.amount + 1 }});
+            setCollectingCans(false);
+        },500);        
     }
 
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            <ClippedDrawer title="Management Sim" page={page} pages={pages} pageClick={(page) => {pageChangeHandle(page)}}/>            
+            <ClippedDrawer title="Management Sim" page={page} pages={pages} pageClick={(page) => {pageChangeHandle(page)}}>
+                <Overview sx={{display: page === 'Overview' ? '' : 'none'}} balance={balance}/>
+                <Work sx={{display: page === 'Work' ? '' : 'none'}} 
+                      collectCans={() => updateCansHandle()} inventory={inventory}
+                      collectingCans={collectingCans}/>
+                <Store sx={{display: page === 'Store' ? '' : 'none'}} 
+                       inventory={inventory}/>
+            </ClippedDrawer>            
         </ThemeProvider>
     );
 }
