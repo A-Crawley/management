@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import ReactDOM from 'react-dom';
-import { ThemeProvider, CssBaseline, createTheme, Drawer, Box, Paper, Typography, Toolbar, Container } from '@mui/material'
+import { ThemeProvider, CssBaseline, createTheme, Paper, Typography } from '@mui/material'
 import { ClippedDrawer } from './components/ClippedDraw.js'
 import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
 import './pages/Overview.js'
@@ -9,11 +9,6 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 
 const theme = createTheme();
 
-const pageOne = () => {
-    return (
-        <Paper><Typography>One</Typography></Paper>
-    )
-}
 const pageTwo = () => {
     return (
         <Paper><Typography>Two</Typography></Paper>
