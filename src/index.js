@@ -1,17 +1,51 @@
-import React from 'react';
+import { useState } from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import { ThemeProvider, CssBaseline, createTheme, Drawer, Box, Paper, Typography, Toolbar, Container } from '@mui/material'
+import { ClippedDrawer } from './components/ClippedDraw.js'
+import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
+import './pages/Overview.js'
+import Overview from './pages/Overview.js';
+import DashboardIcon from '@mui/icons-material/Dashboard';
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+const theme = createTheme();
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+const pageOne = () => {
+    return (
+        <Paper><Typography>One</Typography></Paper>
+    )
+}
+const pageTwo = () => {
+    return (
+        <Paper><Typography>Two</Typography></Paper>
+    )
+}
+const pageThree = () => {
+    return (
+        <Paper><Typography>Three</Typography></Paper>
+    )
+}
+
+const pages = [
+    {title: 'Overview', page: Overview, icon: () => (< DashboardIcon/>)},
+    {title: 'Page Two', page: pageTwo, icon: () => (< AccessibilityNewIcon/>)},
+    {title: 'Page Three', page: pageThree, icon: () => (< AccessibilityNewIcon/>)},
+]
+
+function App() {
+
+    const [page, changePage] = useState(Overview);
+
+    const pageChangeHandle = (page) => {
+        //console.log('changeing page:', page);
+        changePage(page);
+    }
+
+    return (
+        <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <ClippedDrawer title="Management Sim" page={page} pages={pages} pageClick={(page) => {pageChangeHandle(page)}}/>            
+        </ThemeProvider>
+    );
+}
+
+ReactDOM.render(<App />, document.querySelector('#app'));
